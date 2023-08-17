@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { BizResponse } from '@/common/http/biz-response';
-import { BizException } from '@/common/http/biz-exception';
+import { BizException } from "@/common/exceptions/biz-exception";
 
 /**
  * 业务异常filter

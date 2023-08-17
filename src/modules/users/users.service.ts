@@ -5,11 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RolesService } from '@/modules/roles/roles.service';
 import { SlugEnum } from '@/modules/roles/roles.enum';
 import { UserStatus } from '@/modules/users/users.enums';
-import { BizException } from '@/common/http/biz-exception';
 import { BizCode } from '@/common/http/biz-code';
 import { omit } from 'lodash';
 import { CreateUserDto } from '@/modules/users/dtos/create.dto';
 import { v1 as uuidv1 } from 'uuid';
+import { BizException } from '@/common/exceptions/biz-exception';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +25,7 @@ export class UsersService {
     }
     const role = await this.roleService.findOneBy({ slug: SlugEnum.ROLE_NORMAL });
 
+    console.log(JSON.stringify(createUserDto));
     const id = uuidv1();
     await this.userRepository.insert(new UsersEntity({ id, roleId: role.id, ...createUserDto }));
     return await this.userRepository.findOneBy({ id });

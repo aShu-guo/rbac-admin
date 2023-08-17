@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { ClassSerializerInterceptor, ValidationPipe } from "@nestjs/common";
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import * as process from 'process';
 import * as compression from 'compression';
-import { BizExceptionFilter } from '@/common/http/biz-exception.filter';
+import { InternalExceptionFilter } from "@/common/exceptions/internal-exception.filter";
+import { BizExceptionFilter } from "@/common/exceptions/biz-exception.filter";
+import { HttpExceptionFilter } from "@/common/exceptions/http-exception.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { snapshot: true, cors: true });
@@ -12,6 +14,8 @@ async function bootstrap() {
   app.use(compression());
   // 注册为全局filter
   app.useGlobalFilters(new BizExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new InternalExceptionFilter());
   // 校验接口请求参数
   app.useGlobalPipes(
     new ValidationPipe({

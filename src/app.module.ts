@@ -2,7 +2,6 @@ import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import configuration from './config/configuration';
 import * as Joi from 'joi';
 import * as process from 'process';
 import { AuthModule } from '@/modules/auth/auth.module';
@@ -14,6 +13,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '@/modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
+import { CacheStore } from '@nestjs/cache-manager/dist/interfaces/cache-manager.interface';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
   imports: [
@@ -30,7 +32,6 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
               `${process.cwd()}/env/.env.${process.env.NODE_ENV}`,
             ]
           : [`${process.cwd()}/env/.env.${process.env.NODE_ENV}`],
-      load: [configuration],
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
         PORT: Joi.number().default(3000),
@@ -41,7 +42,17 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
       },
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          validationSchema: Joi.object({
+            MYSQL_USERNAME: Joi.string().required(),
+            MYSQL_PASSWORD: Joi.string().required(),
+            MYSQL_DATABASE: Joi.string().default('rbac-admin'),
+            MYSQL_HOST: Joi.string().default('localhost'),
+            MYSQL_PORT: Joi.number().default(3306),
+          }),
+        }),
+      ],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
@@ -57,7 +68,16 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     }),
     JwtModule.registerAsync({
       global: true,
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule.forRoot({
+          validationSchema: Joi.object({
+            JWT_SECRET: Joi.string().required(),
+            JWT_REFRESH_SECRET: Joi.string().required(),
+            JWT_EXPIRES_IN: Joi.string().default('10m'),
+            JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
+          }),
+        }),
+      ],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
@@ -73,11 +93,12 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
     UsersModule,
     RolesModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    { provide: APP_GUARD, useClass: ThrottlerGuard},
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: APP_INTERCEPTOR, useClass: ClassSerializerInterceptor },
   ],
