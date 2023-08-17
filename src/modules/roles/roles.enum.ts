@@ -1,0 +1,5 @@
+export enum SlugEnum {
+  ROLE_NORMAL = 'ROLE_NORMAL',
+  ROLE_ADMIN = 'ROLE_ADMIN',
+  ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN',
+}
