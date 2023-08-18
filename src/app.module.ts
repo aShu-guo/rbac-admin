@@ -13,9 +13,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '@/modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { CacheModule } from '@nestjs/cache-manager';
-import { CacheStore } from '@nestjs/cache-manager/dist/interfaces/cache-manager.interface';
 import { RedisModule } from './common/redis/redis.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -86,6 +85,35 @@ import { RedisModule } from './common/redis/redis.module';
         },
       }),
     }),
+    // RedisModule.register({
+    //   global: true,
+    //   host: 'localhost',
+    //   port: 6379,
+    //   username: 'default',
+    //   password:
+    //     'ULYccTHDq2YGmVv4eZ+FrJvqeTPBedY7gPaO80TLUNYw7GGDdzpnNrxSEDiMeklR+7OjJ3eO7ljJ07RCt7geGGGXOvl5qQDNABeele0XX6xkTSPQh78OEmTUOq4iNBHe0wbgkdL+GyTcUpf8UyJLehLksb+UXzxVmMPJbtWcTetyU9ZyPdGK2FRJUuTvDv2/bB9+ODvWd/tdlLLBSL3yKjp2OP6E+E00PtzbJb0eZdtF4l8P8D1rP0XKQOuDLbFEu7kUL41LCFNPx/mr838ZkBx5n6hQ+3OPpwyGyV8aTXqc/y7AIYQH3wKT4EWiXclvIys9kyujo39298jaH03UTA==',
+    // }),
+    RedisModule.registerAsync({
+      global: true,
+      imports: [
+        ConfigModule.forRoot({
+          validationSchema: Joi.object({
+            REDIS_HOST: Joi.string().default('localhost'),
+            REDIS_PORT: Joi.number().default(6379),
+            REDIS_USERNAME: Joi.string().default('default'),
+            REDIS_PASSWORD: Joi.string().required(),
+          }),
+        }),
+      ],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        host: configService.get<string>('REDIS_HOST'),
+        port: configService.get<number>('REDIS_PORT'),
+        username: configService.get<string>('REDIS_USERNAME'),
+        password: configService.get<string>('REDIS_PASSWORD'),
+      }),
+    }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot({
       ttl: 60,
       limit: 30,
@@ -93,7 +121,6 @@ import { RedisModule } from './common/redis/redis.module';
     AuthModule,
     UsersModule,
     RolesModule,
-    RedisModule,
   ],
   controllers: [AppController],
   providers: [

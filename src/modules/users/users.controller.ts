@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import { UsersEntity } from '@/modules/users/users.entity';
 import { Public } from '@/modules/auth/auth.guard';
-import { EndPoints } from '@/modules/users/users.enums';
+import { EndPoints } from '@/modules/users/users.constants';
 
 @Controller(EndPoints.Index)
 export class UsersController {

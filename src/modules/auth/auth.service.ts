@@ -7,8 +7,8 @@ import { UsersEntity } from '@/modules/users/users.entity';
 import { JwtTokensDto } from '@/modules/auth/dtos/jwt-tokens.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadDto } from '@/modules/auth/dtos/jwt-payload.dto';
-import { RedisService } from '@/common/redis/redis.service';
-import { CacheKeyEnum } from '@/common/redis/cache-key.enum';
+import { CacheKeyEnum, REDIS_CLIENT } from '@/common/redis/redis.constants';
+import { RedisClient } from '@/common/redis/redis.interface';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    private redisService: RedisService,
+    @Inject(REDIS_CLIENT) private redisClient: RedisClient,
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<UsersEntity> {
@@ -41,8 +41,7 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<JwtTokensDto> {
-    const client = this.redisService.getClient();
-    if (await client.sIsMember(CacheKeyEnum.AuthRefreshToken, refreshToken)) {
+    if (await this.redisClient.sismember(CacheKeyEnum.AuthRefreshToken, refreshToken)) {
       // 先判断refreshToken是否在黑名单中
       throw new UnauthorizedException();
     }
@@ -63,7 +62,7 @@ export class AuthService {
       });
 
       // 记录旧refresh
-      client.sAdd(CacheKeyEnum.AuthRefreshToken, refreshToken);
+      this.redisClient.sadd(CacheKeyEnum.AuthRefreshToken, refreshToken);
 
       return new JwtTokensDto({
         access_token,

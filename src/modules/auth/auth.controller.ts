@@ -5,7 +5,7 @@ import { AuthGuard, Public } from '@/modules/auth/auth.guard';
 import { CreateUserDto } from '@/modules/users/dtos/create.dto';
 import { BizResponse } from '@/common/http/biz-response';
 import { UsersEntity } from '@/modules/users/users.entity';
-import { EndPoints } from '@/modules/auth/auth.enums';
+import { EndPoints } from '@/modules/auth/auth.constants';
 import { CurrentUser } from '@/modules/users/user.decorator';
 import { JwtTokensDto } from '@/modules/auth/dtos/jwt-tokens.dto';
 
