@@ -1,4 +1,4 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '@/modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '@/modules/users/dtos/create.dto';
@@ -7,8 +7,8 @@ import { UsersEntity } from '@/modules/users/users.entity';
 import { JwtTokensDto } from '@/modules/auth/dtos/jwt-tokens.dto';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayloadDto } from '@/modules/auth/dtos/jwt-payload.dto';
-import { CacheKeyEnum, REDIS_CLIENT } from '@/common/redis/redis.constants';
-import { RedisClient } from '@/common/redis/redis.interface';
+import { InjectRedisClient, RedisClient } from '@ashu_guo/nest-redis';
+import { CacheKeyEnum } from "@/common/redis/redis.constants";
 
 @Injectable()
 export class AuthService {
@@ -16,7 +16,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
-    @Inject(REDIS_CLIENT) private redisClient: RedisClient,
+    @InjectRedisClient() private readonly redisClient: RedisClient,
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<UsersEntity> {

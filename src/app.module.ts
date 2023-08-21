@@ -13,8 +13,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from '@/modules/users/users.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { RedisModule } from './common/redis/redis.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RedisModule } from '@ashu_guo/nest-redis';
 
 @Module({
   imports: [
@@ -85,14 +85,6 @@ import { ScheduleModule } from '@nestjs/schedule';
         },
       }),
     }),
-    // RedisModule.register({
-    //   global: true,
-    //   host: 'localhost',
-    //   port: 6379,
-    //   username: 'default',
-    //   password:
-    //     'ULYccTHDq2YGmVv4eZ+FrJvqeTPBedY7gPaO80TLUNYw7GGDdzpnNrxSEDiMeklR+7OjJ3eO7ljJ07RCt7geGGGXOvl5qQDNABeele0XX6xkTSPQh78OEmTUOq4iNBHe0wbgkdL+GyTcUpf8UyJLehLksb+UXzxVmMPJbtWcTetyU9ZyPdGK2FRJUuTvDv2/bB9+ODvWd/tdlLLBSL3yKjp2OP6E+E00PtzbJb0eZdtF4l8P8D1rP0XKQOuDLbFEu7kUL41LCFNPx/mr838ZkBx5n6hQ+3OPpwyGyV8aTXqc/y7AIYQH3wKT4EWiXclvIys9kyujo39298jaH03UTA==',
-    // }),
     RedisModule.registerAsync({
       global: true,
       imports: [

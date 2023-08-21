@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@ashu_guo/nest-redis':
+    specifier: ^1.0.5
+    version: 1.0.5(@nestjs/common@10.0.0)
   '@nestjs/cache-manager':
     specifier: ^2.1.0
     version: 2.1.0(@nestjs/common@10.0.0)(@nestjs/core@10.0.0)(cache-manager@5.2.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
@@ -211,6 +214,17 @@ packages:
     transitivePeerDependencies:
       - chokidar
     dev: true
+
+  /@ashu_guo/nest-redis@1.0.5(@nestjs/common@10.0.0):
+    resolution: {integrity: sha512-gqOlT030XeY3veGETwmRSBYNaVxuUcY2Wak+2wcX1AKDF/yRvUF44jl+VYjMzNNJqDeGZWNCGWL/N4JymogQ7w==}
+    peerDependencies:
+      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
+    dependencies:
+      '@nestjs/common': 10.0.0(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      ioredis: 5.3.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /@babel/code-frame@7.22.5:
     resolution: {integrity: sha512-Xmwn266vad+6DAqEB2A6V/CcZVp62BbwVmcOJc2RPuwih1kw02TjQvWVWlcKGbBPd+8/0V5DEkOcizRGYsspYQ==}
