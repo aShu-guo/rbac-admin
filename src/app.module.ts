@@ -15,6 +15,7 @@ import { RolesModule } from './modules/roles/roles.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RedisModule } from '@ashu_guo/nest-redis';
+import { TasksScheduleModule } from './common/tasks-schedule/tasks-schedule.module';
 
 @Module({
   imports: [
@@ -113,6 +114,7 @@ import { RedisModule } from '@ashu_guo/nest-redis';
     AuthModule,
     UsersModule,
     RolesModule,
+    TasksScheduleModule,
   ],
   controllers: [AppController],
   providers: [

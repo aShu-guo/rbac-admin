@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards, Request, Query } from "@nestjs/common";
 import { AuthService } from '@/modules/auth/auth.service';
 import { SignInDto } from '@/modules/users/dtos/sign-in-dto';
 import { AuthGuard, Public } from '@/modules/auth/auth.guard';
@@ -46,5 +46,11 @@ export class AuthController {
   @Get(EndPoints.Profile)
   getProfile(@CurrentUser() user: UsersEntity): BizResponse<UsersEntity> {
     return BizResponse.ok<UsersEntity>(user);
+  }
+
+  @Get('test')
+  @Public()
+  testVerifyIsOk(@Query('token') token: string) {
+    return this.authService.testVerifyIsOk(token)
   }
 }
